@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico — drwch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:    #FAF7F2;
+  --cream2:   #F2EDE4;
+  --cream3:   #E8E0D4;
+  --sand:     #D6CBBA;
+  --sand2:    #BFB09A;
+  --bark:     #8C7B68;
+  --earth:    #4A3F32;
+  --earth2:   #2E271D;
+  --sage:     #4D7C68;
+  --sage2:    #3A6152;
+  --sage3:    #2A4A3E;
+  --sage-lt:  #C8DDD6;
+  --sage-pale:#EAF2EF;
+  --amber:    #C07D3A;
+  --amber-lt: #F5E6D0;
+  --rust:     #B0522A;
+  --rust-lt:  #F5E0D4;
+  --slide-w:  1100px;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--earth);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow: hidden;
+}
+
+/* ── STAGE ── */
+.stage {
+  width: 100vw; height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  background: linear-gradient(160deg, #2E271D 0%, #3d3426 50%, #2A201A 100%);
+}
+
+.slide-wrap {
+  width: min(96vw, var(--slide-w));
+  aspect-ratio: 16/9;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.slide {
+  position: absolute; inset: 0;
+  display: none;
+  background: var(--cream);
+}
+.slide.active { display: flex; }
+
+/* ── TEXTURE OVERLAY (subtle grain) ── */
+.slide::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 10;
+  opacity: 0.5;
+}
+
+/* ── SHARED ELEMENTS ── */
+.tag {
+  font-size: clamp(7px, 0.65vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.rule {
+  width: 36px; height: 2px;
+  background: var(--sage);
+  border-radius: 2px;
+}
+
+/* ── SLIDE 0 — PORTADA ── */
+#s0 {
+  background: var(--cream);
+  flex-direction: row;
+}
+
+#s0 .s0-left {
+  width: 56%;
+  padding: 7% 5% 7% 7%;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  position: relative; z-index: 2;
+}
+
+#s0 .brand {
+  display: flex; align-items: center; gap: 10px;
+}
+
+#s0 .brand-logo {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: clamp(10px, 1vw, 13px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+#s0 .brand-line {
+  width: 1px; height: 16px;
+  background: var(--sand);
+}
+
+#s0 .brand-sub {
+  font-size: clamp(9px, 0.8vw, 11px);
+  color: var(--sand2);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+#s0 .headline {
+  display: flex; flex-direction: column; gap: 1em;
+}
+
+#s0 h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 3.4vw, 38px);
+  font-weight: 400;
+  line-height: 1.18;
+  color: var(--earth2);
+}
+
+#s0 h1 em {
+  font-style: italic;
+  color: var(--sage);
+}
+
+#s0 .tagline {
+  font-size: clamp(10px, 1vw, 13px);
+  color: var(--bark);
+  line-height: 1.7;
+  font-weight: 400;
+  max-width: 38ch;
+}
+
+#s0 .agenda-pills {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+#s0 .ap-item {
+  display: flex; align-items: center; gap: 12px;
+}
+
+#s0 .ap-time {
+  font-size: clamp(8px, 0.75vw, 10px);
+  font-weight: 600;
+  color: var(--sage);
+  background: var(--sage-pale);
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+#s0 .ap-label {
+  font-size: clamp(9px, 0.9vw, 12px);
+  color: var(--earth);
+  font-weight: 500;
+}
+
+#s0 .ap-desc {
+  font-size: clamp(8px, 0.75vw, 10px);
+  color: var(--bark);
+  font-weight: 400;
+}
+
+/* Right decorative panel */
+#s0 .s0-right {
+  flex: 1;
+  background: var(--earth2);
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+
+#s0 .s0-right::before {
+  content: '';
+  position: absolute;
+  top: -30%; right: -30%;
+  width: 90%; height: 90%;
+  border: 1px solid rgba(77,124,104,0.25);
+  border-radius: 50%;
+}
+
+#s0 .s0-right::after {
+  content: '';
+  position: absolute;
+  bottom: -30%; left: -20%;
+  width: 70%; height: 70%;
+  border: 1px solid rgba(77,124,104,0.15);
+  border-radius: 50%;
+}
+
+.hero-stat {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 8%;
+}
+
+.hero-stat .hs-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 7vw, 80px);
+  font-weight: 600;
+  color: var(--sage-lt);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.hero-stat .hs-unit {
+  font-size: 0.45em;
+  vertical-align: super;
+  font-style: italic;
+}
+
+.hero-stat .hs-label {
+  font-size: clamp(9px, 0.9vw, 12px);
+  color: var(--sage-lt);
+  opacity: 0.6;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ── SLIDE 1 — COSTOS ── */
+#s1 { flex-direction: column; }
+
+.si { width: 100%; height: 100%; padding: 6% 7%; display: flex; flex-direction: column; }
+
+.si-head { margin-bottom: 4%; }
+
+.si-head .tag { margin-bottom: 8px; }
+
+.si-head h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(16px, 2.2vw, 26px);
+  font-weight: 400;
+  color: var(--earth2);
+  line-height: 1.25;
+  max-width: 55ch;
+}
+
+.cost-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2.5%;
+  flex: 1;
+}
+
+.cost-card {
+  border-radius: 12px;
+  padding: 6% 5%;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+}
+
+.cost-card.c1 { background: var(--earth2); }
+.cost-card.c2 { background: var(--cream2); border: 1px solid var(--cream3); }
+.cost-card.c3 { background: var(--sage3); }
+
+.cc-top {}
+
+.cc-pct {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 3.8vw, 46px);
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.cost-card.c1 .cc-pct { color: var(--sage-lt); }
+.cost-card.c2 .cc-pct { color: var(--earth2); }
+.cost-card.c3 .cc-pct { color: var(--sage-lt); }
+
+.cc-sup { font-size: 0.4em; vertical-align: super; font-style: italic; }
+
+.cc-area {
+  font-size: clamp(8px, 0.75vw, 10px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.cost-card.c1 .cc-area { color: rgba(200,221,214,0.5); }
+.cost-card.c2 .cc-area { color: var(--bark); }
+.cost-card.c3 .cc-area { color: rgba(200,221,214,0.5); }
+
+.cc-desc {
+  font-size: clamp(9px, 0.85vw, 11px);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.cost-card.c1 .cc-desc { color: rgba(200,221,214,0.65); }
+.cost-card.c2 .cc-desc { color: var(--bark); }
+.cost-card.c3 .cc-desc { color: rgba(200,221,214,0.65); }
+
+.cc-insight {
+  display: flex; align-items: center; gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid;
+  font-size: clamp(8px, 0.75vw, 10px);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.cost-card.c1 .cc-insight { border-color: rgba(200,221,214,0.12); color: rgba(200,221,214,0.45); }
+.cost-card.c2 .cc-insight { border-color: var(--cream3); color: var(--sand2); }
+.cost-card.c3 .cc-insight { border-color: rgba(200,221,214,0.12); color: rgba(200,221,214,0.45); }
+
+.cc-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cost-card.c1 .cc-dot { background: var(--sage-lt); }
+.cost-card.c2 .cc-dot { background: var(--sage); }
+.cost-card.c3 .cc-dot { background: var(--sage-lt); }
+
+/* ── SLIDE 2 — METODOLOGÍA ── */
+#s2 { flex-direction: column; background: var(--cream); }
+
+.process-row {
+  display: flex; gap: 0; flex: 1;
+  margin-top: 4%;
+}
+
+.proc-step {
+  flex: 1;
+  padding: 4% 4%;
+  position: relative;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.proc-step::after {
+  content: '→';
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(12px, 1.2vw, 16px);
+  color: var(--sand);
+  z-index: 2;
+}
+
+.proc-step:last-child::after { display: none; }
+
+.proc-step.featured {
+  background: var(--sage);
+  border-radius: 12px;
+  margin-top: -8px;
+  margin-bottom: -8px;
+  padding-top: calc(4% + 8px);
+  padding-bottom: calc(4% + 8px);
+}
+
+.ps-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 3.8vw, 48px);
+  font-weight: 600;
+  color: var(--cream3);
+  line-height: 1;
+}
+
+.proc-step.featured .ps-num { color: rgba(255,255,255,0.2); }
+
+.ps-week {
+  font-size: clamp(7px, 0.65vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.proc-step.featured .ps-week { color: rgba(255,255,255,0.6); }
+
+.ps-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(12px, 1.3vw, 15px);
+  font-weight: 400;
+  color: var(--earth2);
+  line-height: 1.35;
+}
+
+.proc-step.featured .ps-title { color: #fff; }
+
+.ps-items {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: auto;
+}
+
+.ps-item {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: clamp(8px, 0.8vw, 10px);
+  color: var(--bark);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.proc-step.featured .ps-item { color: rgba(255,255,255,0.75); }
+
+.ps-bullet {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--sage);
+  margin-top: 5px; flex-shrink: 0;
+}
+
+.proc-step.featured .ps-bullet { background: rgba(255,255,255,0.5); }
+
+/* ── SLIDE 3 — EVIDENCIA ── */
+#s3 { flex-direction: column; background: var(--cream); }
+
+.evidence-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2%;
+  flex: 1;
+  margin-top: 4%;
+}
+
+.ev-card {
+  border-radius: 12px;
+  padding: 5%;
+  border: 1px solid var(--cream3);
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: var(--cream);
+}
+
+.ev-card.featured {
+  grid-row: 1 / 3;
+  background: var(--earth2);
+  border-color: transparent;
+}
+
+.ev-tag {
+  font-size: clamp(7px, 0.65vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.ev-card.featured .ev-tag { color: var(--sage-lt); opacity: 0.7; }
+
+.ev-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 5.5vw, 62px);
+  font-weight: 600;
+  color: var(--earth2);
+  line-height: 1;
+}
+
+.ev-card.featured .ev-num { color: var(--sage-lt); }
+
+.ev-sup { font-size: 0.45em; vertical-align: super; font-style: italic; }
+
+.ev-title {
+  font-size: clamp(10px, 0.95vw, 13px);
+  font-weight: 600;
+  color: var(--earth);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.ev-card.featured .ev-title { color: #fff; }
+
+.ev-sub {
+  font-size: clamp(8px, 0.75vw, 10px);
+  color: var(--bark);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+.ev-card.featured .ev-sub { color: rgba(200,221,214,0.55); }
+
+/* ── SLIDE 4 — PROPUESTA ── */
+#s4 { flex-direction: row; background: var(--cream); }
+
+#s4 .p4-left {
+  width: 50%;
+  padding: 7% 5% 7% 7%;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-right: 1px solid var(--cream3);
+}
+
+#s4 .p4-right {
+  flex: 1;
+  background: var(--cream2);
+  padding: 7% 6%;
+  display: flex; flex-direction: column; justify-content: center; gap: 0;
+}
+
+#s4 h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(15px, 2vw, 22px);
+  font-weight: 400;
+  color: var(--earth2);
+  line-height: 1.3;
+  margin-top: 8px;
+  margin-bottom: 5%;
+}
+
+.deliverables {
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.del {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--cream3);
+}
+
+.del:last-child { border-bottom: none; padding-bottom: 0; }
+
+.del-ico {
+  width: clamp(18px,1.6vw,22px);
+  height: clamp(18px,1.6vw,22px);
+  border-radius: 50%;
+  background: var(--sage-pale);
+  border: 1px solid var(--sage-lt);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+  color: var(--sage2);
+  font-size: clamp(8px,0.8vw,10px);
+  font-weight: 700;
+}
+
+.del-body {}
+
+.del-title {
+  font-size: clamp(10px, 0.95vw, 13px);
+  font-weight: 600;
+  color: var(--earth2);
+  margin-bottom: 2px;
+}
+
+.del-desc {
+  font-size: clamp(8px, 0.8vw, 11px);
+  color: var(--bark);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.p4-footer {
+  font-size: clamp(8px, 0.75vw, 10px);
+  color: var(--sand2);
+  font-weight: 400;
+  padding-top: 10px;
+  border-top: 1px solid var(--cream3);
+}
+
+/* Timeline right */
+.tl-items {
+  display: flex; flex-direction: column; gap: 0;
+  flex: 1; justify-content: center;
+}
+
+.tl-item {
+  display: flex; gap: 14px; align-items: flex-start;
+}
+
+.tl-track {
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: 4px;
+}
+
+.tl-dot2 {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--sage-lt);
+  border: 2px solid var(--sage);
+  flex-shrink: 0;
+}
+
+.tl-line2 {
+  width: 1px; flex: 1;
+  background: var(--cream3);
+  min-height: 28px;
+}
+
+.tl-item:last-child .tl-line2 { display: none; }
+
+.tl-content {
+  padding-bottom: 16px;
+  flex: 1;
+}
+
+.tl-week2 {
+  font-size: clamp(7px, 0.65vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 3px;
+}
+
+.tl-title2 {
+  font-size: clamp(10px, 0.95vw, 13px);
+  font-weight: 600;
+  color: var(--earth2);
+  margin-bottom: 2px;
+}
+
+.tl-desc2 {
+  font-size: clamp(8px, 0.75vw, 10px);
+  color: var(--bark);
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+/* ── SLIDE 5 — CIERRE ── */
+#s5 { flex-direction: row; background: var(--cream); }
+
+#s5 .s5-left {
+  width: 52%;
+  padding: 7% 5% 7% 7%;
+  display: flex; flex-direction: column; justify-content: center; gap: 6%;
+}
+
+#s5 .s5-right {
+  flex: 1;
+  background: var(--earth2);
+  padding: 7% 6%;
+  display: flex; flex-direction: column; justify-content: center; gap: 7%;
+}
+
+#s5 h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(16px, 2.1vw, 24px);
+  font-weight: 400;
+  color: var(--earth2);
+  line-height: 1.3;
+}
+
+.anchor-block {
+  background: var(--sage-pale);
+  border-left: 3px solid var(--sage);
+  border-radius: 0 8px 8px 0;
+  padding: 4% 5%;
+}
+
+.anchor-block p {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(11px, 1.1vw, 14px);
+  color: var(--sage3);
+  line-height: 1.6;
+}
+
+.s5-note {
+  font-size: clamp(9px, 0.85vw, 12px);
+  color: var(--bark);
+  line-height: 1.65;
+  font-weight: 400;
+  max-width: 40ch;
+}
+
+.s5-step {
+  display: flex; flex-direction: column; gap: 5px;
+}
+
+.s5-step-lbl {
+  font-size: clamp(7px, 0.65vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage-lt);
+  opacity: 0.6;
+}
+
+.s5-step-val {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.s5-step-sub {
+  font-size: clamp(8px, 0.78vw, 10px);
+  color: rgba(200,221,214,0.5);
+  font-weight: 400;
+}
+
+.s5-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+}
+
+.roi-feature {
+  background: rgba(77,124,104,0.18);
+  border: 1px solid rgba(77,124,104,0.3);
+  border-radius: 10px;
+  padding: 5% 5%;
+  text-align: center;
+}
+
+.roi-feature .rf-lbl {
+  font-size: clamp(7px, 0.65vw, 9px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage-lt);
+  opacity: 0.65;
+  margin-bottom: 6px;
+}
+
+.roi-feature .rf-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 600;
+  color: var(--sage-lt);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.roi-feature .rf-sub {
+  font-size: clamp(8px, 0.75vw, 10px);
+  color: rgba(200,221,214,0.45);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ── NAV ── */
+.nav-area {
+  display: flex; align-items: center; justify-content: space-between;
+  width: min(96vw, var(--slide-w));
+  padding: 10px 0 0;
+}
+
+.nbtn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(10px,0.9vw,12px);
+  font-weight: 500;
+  padding: 7px 18px;
+  border-radius: 100px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+
+.nbtn:hover { background: rgba(255,255,255,0.13); color: #fff; }
+.nbtn:disabled { opacity: 0.18; cursor: default; }
+
+.ndots { display: flex; gap: 7px; align-items: center; }
+
+.ndot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  cursor: pointer;
+  transition: all 0.22s;
+}
+
+.ndot.active {
+  width: 22px; border-radius: 100px;
+  background: var(--sage-lt);
+}
+
+.nlabel {
+  font-size: clamp(9px,0.8vw,11px);
+  color: rgba(255,255,255,0.28);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="slide-wrap">
+
+    <!-- S0 PORTADA -->
+    <div class="slide active" id="s0">
+      <div class="s0-left">
+        <div class="brand">
+          <div class="brand-logo">drwch</div>
+          <div class="brand-line"></div>
+          <div class="brand-sub">Consultoría industrial · LATAM</div>
+        </div>
+        <div class="headline">
+          <div class="tag">Diagnóstico gratuito — 30 minutos</div>
+          <h1>Reducción de costos <em>industriales</em> — ¿cuánto está perdiendo su operación hoy?</h1>
+          <p class="tagline">Identificamos dónde se escapa la rentabilidad y cuánto vale recuperarla. Sin rodeos.</p>
+        </div>
+        <div class="agenda-pills">
+          <div class="ap-item">
+            <span class="ap-time">Min 0 – 15</span>
+            <div>
+              <div class="ap-label">Diagnóstico de su operación</div>
+              <div class="ap-desc">Costos, equipos, visibilidad de datos</div>
+            </div>
+          </div>
+          <div class="ap-item">
+            <span class="ap-time">Min 15 – 30</span>
+            <div>
+              <div class="ap-label">Propuesta de valor concreta</div>
+              <div class="ap-desc">Qué encontraríamos y cuánto representaría</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s0-right">
+        <div class="hero-stat">
+          <div class="hs-num">10–30<span class="hs-unit">×</span></div>
+          <div class="hs-label">Retorno histórico<br>sobre el costo del análisis</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S1 COSTOS -->
+    <div class="slide" id="s1">
+      <div class="si">
+        <div class="si-head">
+          <div class="tag">Contexto — Dónde viven los costos</div>
+          <h2>En manufactura, el 70–80% de los costos controlables están en tres áreas</h2>
+        </div>
+        <div class="cost-grid">
+          <div class="cost-card c1">
+            <div class="cc-top">
+              <div class="cc-pct">8–15<span class="cc-sup">%</span></div>
+              <div class="cc-area">Energía y servicios</div>
+            </div>
+            <div class="cc-desc">La mayoría de plantas no mide el consumo por proceso. Eso hace invisible el desperdicio.</div>
+            <div class="cc-insight">
+              <div class="cc-dot"></div>
+              Sin medición por proceso, el ahorro no se puede gestionar
+            </div>
+          </div>
+          <div class="cost-card c2">
+            <div class="cc-top">
+              <div class="cc-pct">12–20<span class="cc-sup">%</span></div>
+              <div class="cc-area">Paros y mantenimiento</div>
+            </div>
+            <div class="cc-desc">Cada hora de paro no planificado tiene un costo real calculable. Pocas empresas lo calculan.</div>
+            <div class="cc-insight">
+              <div class="cc-dot"></div>
+              El mantenimiento reactivo cuesta 3–5× más que el planificado
+            </div>
+          </div>
+          <div class="cost-card c3">
+            <div class="cc-top">
+              <div class="cc-pct">5–12<span class="cc-sup">%</span></div>
+              <div class="cc-area">Merma y reproceso</div>
+            </div>
+            <div class="cc-desc">El rechazo y el retrabajo son costos silenciosos que rara vez aparecen en el reporte correcto.</div>
+            <div class="cc-insight">
+              <div class="cc-dot"></div>
+              La merma no reportada es rentabilidad no recuperada
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2 METODOLOGÍA -->
+    <div class="slide" id="s2">
+      <div class="si">
+        <div class="si-head">
+          <div class="tag">Metodología — Análisis Fase 1</div>
+          <h2>Un proceso estructurado de 4–8 semanas con resultados medibles desde la semana 2</h2>
+        </div>
+        <div class="process-row">
+          <div class="proc-step">
+            <div class="ps-num">01</div>
+            <div class="ps-week">Semana 1–2</div>
+            <div class="ps-title">Mapeo de costos por proceso</div>
+            <ul class="ps-items">
+              <li class="ps-item"><div class="ps-bullet"></div>Centros de costo identificados</li>
+              <li class="ps-item"><div class="ps-bullet"></div>Consumo real vs. estándar</li>
+              <li class="ps-item"><div class="ps-bullet"></div>Línea base documentada</li>
+            </ul>
+          </div>
+          <div class="proc-step featured">
+            <div class="ps-num">02</div>
+            <div class="ps-week">Semana 2–4</div>
+            <div class="ps-title">Identificación de oportunidades</div>
+            <ul class="ps-items">
+              <li class="ps-item"><div class="ps-bullet"></div>Top 5 oportunidades priorizadas</li>
+              <li class="ps-item"><div class="ps-bullet"></div>Estimación de ahorro por ítem</li>
+              <li class="ps-item"><div class="ps-bullet"></div>Esfuerzo vs. impacto definido</li>
+            </ul>
+          </div>
+          <div class="proc-step">
+            <div class="ps-num">03</div>
+            <div class="ps-week">Semana 4–6</div>
+            <div class="ps-title">Hoja de ruta con quick wins</div>
+            <ul class="ps-items">
+              <li class="ps-item"><div class="ps-bullet"></div>Responsables y plazos</li>
+              <li class="ps-item"><div class="ps-bullet"></div>Acciones de 30 días con resultado</li>
+              <li class="ps-item"><div class="ps-bullet"></div>Métricas de seguimiento</li>
+            </ul>
+          </div>
+          <div class="proc-step">
+            <div class="ps-num">04</div>
+            <div class="ps-week">Semana 6–8</div>
+            <div class="ps-title">Presentación ejecutiva</div>
+            <ul class="ps-items">
+              <li class="ps-item"><div class="ps-bullet"></div>Reporte listo para directivos</li>
+              <li class="ps-item"><div class="ps-bullet"></div>ROI proyectado documentado</li>
+              <li class="ps-item"><div class="ps-bullet"></div>Dashboard Power BI de seguimiento</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3 EVIDENCIA -->
+    <div class="slide" id="s3">
+      <div class="si">
+        <div class="si-head">
+          <div class="tag">Resultados — Proyectos similares en manufactura LATAM</div>
+          <h2>Lo que encontramos en operaciones como la suya</h2>
+        </div>
+        <div class="evidence-layout">
+          <div class="ev-card featured">
+            <div class="ev-tag">Retorno sobre el análisis</div>
+            <div>
+              <div class="ev-num">10–30<span class="ev-sup">×</span></div>
+              <div class="ev-title">El costo del análisis se recupera con la primera reducción implementada</div>
+            </div>
+            <div class="ev-sub">Promedio en proyectos de manufactura de procesos en México, Colombia y Centroamérica.</div>
+          </div>
+          <div class="ev-card">
+            <div class="ev-tag">Reducción en costos variables</div>
+            <div class="ev-num" style="font-size: clamp(26px,4vw,46px);">8–15<span class="ev-sup">%</span></div>
+            <div class="ev-title">Sin inversión de capital requerida en Fase 1</div>
+            <div class="ev-sub">Ajustes operativos, parámetros de proceso y gestión de consumos.</div>
+          </div>
+          <div class="ev-card">
+            <div class="ev-tag">Mejora en disponibilidad de equipos</div>
+            <div class="ev-num" style="font-size: clamp(26px,4vw,46px);">+12<span class="ev-sup">pts</span></div>
+            <div class="ev-title">Al migrar de mantenimiento reactivo a planificado</div>
+            <div class="ev-sub">Resultado promedio en plantas con alta incidencia de paros no programados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 PROPUESTA -->
+    <div class="slide" id="s4">
+      <div class="p4-left">
+        <div>
+          <div class="tag">Fase 1 — Análisis de reducción de costos</div>
+          <h2>Lo que incluye el análisis completo</h2>
+          <div class="deliverables">
+            <div class="del">
+              <div class="del-ico">✓</div>
+              <div class="del-body">
+                <div class="del-title">Mapeo de costos por proceso</div>
+                <div class="del-desc">Centros de costo con consumo real vs. estándar</div>
+              </div>
+            </div>
+            <div class="del">
+              <div class="del-ico">✓</div>
+              <div class="del-body">
+                <div class="del-title">Top 5 oportunidades de ahorro priorizadas</div>
+                <div class="del-desc">Con estimación de impacto económico en su P&L</div>
+              </div>
+            </div>
+            <div class="del">
+              <div class="del-ico">✓</div>
+              <div class="del-body">
+                <div class="del-title">Hoja de ruta de implementación</div>
+                <div class="del-desc">Responsables, plazos y métricas de seguimiento</div>
+              </div>
+            </div>
+            <div class="del">
+              <div class="del-ico">✓</div>
+              <div class="del-body">
+                <div class="del-title">Presentación ejecutiva lista</div>
+                <div class="del-desc">Para directivos y accionistas</div>
+              </div>
+            </div>
+            <div class="del">
+              <div class="del-ico">✓</div>
+              <div class="del-body">
+                <div class="del-title">Dashboard Power BI de seguimiento</div>
+                <div class="del-desc">Para monitorear la ejecución post-análisis</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p4-footer">Inversión fija definida antes de iniciar — sin sorpresas.</div>
+      </div>
+      <div class="p4-right">
+        <div class="si-head" style="margin-bottom: 0;">
+          <div class="tag" style="margin-bottom: 12px;">Cronograma</div>
+        </div>
+        <div class="tl-items">
+          <div class="tl-item">
+            <div class="tl-track"><div class="tl-dot2"></div><div class="tl-line2"></div></div>
+            <div class="tl-content">
+              <div class="tl-week2">Semana 1–2</div>
+              <div class="tl-title2">Recolección de datos y mapeo</div>
+              <div class="tl-desc2">Sesiones con operaciones y finanzas, presencial o remoto</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-track"><div class="tl-dot2"></div><div class="tl-line2"></div></div>
+            <div class="tl-content">
+              <div class="tl-week2">Semana 3–4</div>
+              <div class="tl-title2">Análisis e identificación de oportunidades</div>
+              <div class="tl-desc2">Benchmarking sectorial y cuantificación de impacto</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-track"><div class="tl-dot2"></div><div class="tl-line2"></div></div>
+            <div class="tl-content">
+              <div class="tl-week2">Semana 5–6</div>
+              <div class="tl-title2">Hoja de ruta y primeros quick wins</div>
+              <div class="tl-desc2">Acciones con resultado visible en 30 días</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-track"><div class="tl-dot2"></div></div>
+            <div class="tl-content">
+              <div class="tl-week2">Semana 6–8</div>
+              <div class="tl-title2">Entrega y presentación ejecutiva</div>
+              <div class="tl-desc2">Informe final, dashboard y sesión con su equipo directivo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S5 CIERRE -->
+    <div class="slide" id="s5">
+      <div class="s5-left">
+        <div>
+          <div class="tag" style="margin-bottom: 8px;">Siguiente paso</div>
+          <h2>Si encontramos el 10% de reducción en sus costos variables —</h2>
+        </div>
+        <div class="anchor-block">
+          <p>"¿Cuánto representa eso en su P&L anual?"</p>
+        </div>
+        <p class="s5-note">Si la respuesta justifica el análisis, el siguiente paso es simple: una propuesta formal con alcance y costo fijo para revisar juntos esta semana.</p>
+      </div>
+      <div class="s5-right">
+        <div class="s5-step">
+          <div class="s5-step-lbl">Hoy acordamos</div>
+          <div class="s5-step-val">El alcance del análisis</div>
+          <div class="s5-step-sub">Sin compromiso hasta revisar la propuesta formal</div>
+        </div>
+        <div class="s5-divider"></div>
+        <div class="s5-step">
+          <div class="s5-step-lbl">Esta semana</div>
+          <div class="s5-step-val">Propuesta formal con costo fijo</div>
+          <div class="s5-step-sub">Alcance detallado, cronograma y entregables</div>
+        </div>
+        <div class="s5-divider"></div>
+        <div class="roi-feature">
+          <div class="rf-lbl">Retorno histórico sobre el análisis</div>
+          <div class="rf-num">10–30×</div>
+          <div class="rf-sub">Promedio en manufactura LATAM</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slide-wrap -->
+
+  <div class="nav-area">
+    <button class="nbtn" id="pb" onclick="nav(-1)" disabled>← Anterior</button>
+    <div class="ndots" id="nd"></div>
+    <div class="nlabel" id="nl">Portada</div>
+    <button class="nbtn" id="nb" onclick="nav(1)">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const labels = ['Portada','Costos','Metodología','Evidencia','Propuesta','Cierre'];
+let cur = 0;
+
+const nd = document.getElementById('nd');
+labels.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'ndot' + (i===0?' active':'');
+  d.onclick = () => go(i);
+  nd.appendChild(d);
+});
+
+function go(n) {
+  slides[cur].classList.remove('active');
+  nd.children[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  nd.children[cur].classList.add('active');
+  document.getElementById('pb').disabled = cur===0;
+  document.getElementById('nb').disabled = cur===slides.length-1;
+  document.getElementById('nl').textContent = labels[cur];
+}
+
+function nav(d){ const n=cur+d; if(n>=0&&n<slides.length) go(n); }
+
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') nav(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') nav(-1);
+});
+</script>
+</body>
+</html>
